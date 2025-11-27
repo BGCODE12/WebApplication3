@@ -1,0 +1,10 @@
+﻿namespace WebApplication3.Models.DTOs.Shift
+{
+    public class ShiftCreateDto
+    {
+        public string ShiftName { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public int GracePeriodMinutes { get; set; }
+    }
+}
