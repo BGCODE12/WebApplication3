@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "WebApplication3/1.0.0": {
         "dependencies": {
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
           "Microsoft.Data.SqlClient": "7.0.0-preview2.25289.6",
           "Swashbuckle.AspNetCore": "6.6.2",
           "ZKWeb.ORM.Dapper": "3.0.0"
@@ -86,6 +87,17 @@
           "lib/netstandard2.0/Dommel.dll": {
             "assemblyVersion": "1.11.0.0",
             "fileVersion": "1.11.0.0"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.6": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.14.0"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
+            "assemblyVersion": "8.0.6.0",
+            "fileVersion": "8.0.624.26909"
           }
         }
       },
@@ -1769,6 +1781,13 @@
       "sha512": "sha512-+ihEO5hktKLtFpv/Kd6AWWDW2tCJJfuw43D3VOismvdRyKtqBKDgZFpwMqLQYap0gZtW+9LAYX5mEukWQev5rg==",
       "path": "dommel/1.11.0",
       "hashPath": "dommel.1.11.0.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-devoUZd8YqikCheBVYpIyvp9psM2Y2ZhOvq1zL2YSjIoq3FUQH8LpLkGak+8oAi/5DGqX8KWyLpZJSUXtOAVCw==",
+      "path": "microsoft.aspnetcore.authentication.jwtbearer/8.0.6",
+      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/8.0.0": {
       "type": "package",

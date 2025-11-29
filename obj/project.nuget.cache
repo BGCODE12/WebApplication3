@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "vi5uqxnIfZo=",
+  "dgSpecHash": "V8SN/OoIc9g=",
   "success": true,
   "projectFilePath": "C:\\Users\\RYADAH4\\source\\repos\\WebApplication3\\WebApplication3\\WebApplication3.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "C:\\Users\\RYADAH4\\.nuget\\packages\\dapper.fluentmap\\1.8.0\\dapper.fluentmap.1.8.0.nupkg.sha512",
     "C:\\Users\\RYADAH4\\.nuget\\packages\\dapper.fluentmap.dommel\\1.7.0\\dapper.fluentmap.dommel.1.7.0.nupkg.sha512",
     "C:\\Users\\RYADAH4\\.nuget\\packages\\dommel\\1.11.0\\dommel.1.11.0.nupkg.sha512",
+    "C:\\Users\\RYADAH4\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.6\\microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512",
     "C:\\Users\\RYADAH4\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
     "C:\\Users\\RYADAH4\\.nuget\\packages\\microsoft.bcl.cryptography\\8.0.0\\microsoft.bcl.cryptography.8.0.0.nupkg.sha512",
     "C:\\Users\\RYADAH4\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\2.9.4\\microsoft.codeanalysis.analyzers.2.9.4.nupkg.sha512",
