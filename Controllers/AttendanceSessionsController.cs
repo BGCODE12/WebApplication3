@@ -2,7 +2,9 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using WebApplication3.Context;
+using WebApplication3.Models;
 using WebApplication3.Models.DTOs.AttendanceSessions;
+using WebApplication3.Repositories.AttendanceSessionRepository;
 
 namespace WebApplication3.Controllers
 {
@@ -10,103 +12,69 @@ namespace WebApplication3.Controllers
     [Route("api/[controller]")]
     public class AttendanceSessionsController : ControllerBase
     {
-        private readonly Db _db;
+        private readonly IAttendanceSessionRepository _repo;
 
-        public AttendanceSessionsController(Db db)
+        public AttendanceSessionsController(IAttendanceSessionRepository repo)
         {
-            _db = db;
+            _repo = repo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AttendanceSessionReadDto>>> GetAll([FromQuery] int? employeeId, [FromQuery] DateTime? workDate)
+        public async Task<IActionResult> GetAll()
         {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var sql = @"
-                SELECT SessionID, EmployeeID, WorkDate,
-                       CheckInTime,
-                       CheckOutTime,
-                       DurationMinutes
-                FROM AttendanceSessions
-                WHERE (@employeeId IS NULL OR EmployeeID = @employeeId)
-                  AND (@workDate IS NULL OR WorkDate = @workDate)
-                ORDER BY WorkDate DESC, SessionID DESC";
-
-            var items = await conn.QueryAsync<AttendanceSessionReadDto>(sql, new { employeeId, workDate });
-            return Ok(items);
+            return Ok(await _repo.GetAll());
         }
 
-        [HttpGet("{id:long}")]
-        public async Task<ActionResult<AttendanceSessionReadDto>> GetById(long id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(long id)
         {
-            using var conn = _db.CreateConnection();
-
-            var item = await conn.QueryFirstOrDefaultAsync<AttendanceSessionReadDto>(
-                @"SELECT SessionID, EmployeeID, WorkDate,
-                         CheckInTime,
-                         CheckOutTime,
-                         DurationMinutes
-                  FROM AttendanceSessions WHERE SessionID=@id", new { id });
-
-            return item is null ? NotFound(new { message = "الجلسة غير موجودة." }) : Ok(item);
+            var item = await _repo.GetById(id);
+            return item == null ? NotFound() : Ok(item);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(AttendanceSessionCreateDto dto)
         {
-            using var conn = _db.CreateConnection();
-
-            var sql = @"
-                INSERT INTO AttendanceSessions (EmployeeID, WorkDate, CheckInTime, CheckOutTime, DurationMinutes)
-                VALUES (@EmployeeID, @WorkDate, @CheckInTime, @CheckOutTime, @DurationMinutes);
-                SELECT CAST(SCOPE_IDENTITY() AS BIGINT);";
-
-            var id = await conn.ExecuteScalarAsync<long>(sql, dto);
-
-            return CreatedAtAction(nameof(GetById), new { id }, new { SessionID = id });
-        }
-
-        [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, AttendanceSessionUpdateDto dto)
-        {
-            using var conn = _db.CreateConnection();
-
-            var exists = await conn.ExecuteScalarAsync<int>(
-                "SELECT COUNT(1) FROM AttendanceSessions WHERE SessionID=@id", new { id });
-
-            if (exists == 0)
-                return NotFound(new { message = "الجلسة غير موجودة." });
-
-            var sql = @"
-                UPDATE AttendanceSessions
-                SET WorkDate=@WorkDate,
-                    CheckInTime=@CheckInTime,
-                    CheckOutTime=@CheckOutTime,
-                    DurationMinutes=@DurationMinutes
-                WHERE SessionID=@id";
-
-            await conn.ExecuteAsync(sql, new
+            var model = new AttendanceSession
             {
-                id,
-                dto.WorkDate,
-                dto.CheckInTime,
-                dto.CheckOutTime,
-                dto.DurationMinutes
-            });
+                EmployeeID = dto.EmployeeID,
+                CheckInTime = dto.CheckInTime,
+                CheckOutTime = dto.CheckOutTime,
+                WorkDate = dto.CheckInTime.Date,
+                DurationMinutes = (int)(dto.CheckOutTime - dto.CheckInTime).TotalMinutes
+            };
 
-            return Ok(new { message = "تم التحديث." });
+            return (await _repo.Create(model)) > 0
+                ? Ok("Session created")
+                : BadRequest();
         }
 
-        [HttpDelete("{id:long}")]
+        [HttpPut]
+        public async Task<IActionResult> Update(AttendanceSessionUpdateDto dto)
+        {
+            var model = await _repo.GetById(dto.SessionID);
+            if (model == null) return NotFound();
+
+            model.EmployeeID = dto.EmployeeID;
+            model.CheckInTime = dto.CheckInTime;
+            model.CheckOutTime = dto.CheckOutTime;
+            model.WorkDate = dto.CheckInTime.Date;
+            model.DurationMinutes = (int)(dto.CheckOutTime - dto.CheckInTime).TotalMinutes;
+
+            return (await _repo.Update(model)) > 0
+                ? Ok("Session updated")
+                : BadRequest();
+        }
+
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            using var conn = _db.CreateConnection();
-
-            var rows = await conn.ExecuteAsync("DELETE FROM AttendanceSessions WHERE SessionID=@id", new { id });
-
-            return rows == 0 ? NotFound(new { message = "الجلسة غير موجودة." })
-                             : Ok(new { message = "تم الحذف." });
+            return (await _repo.Delete(id)) > 0
+                ? Ok("Session deleted")
+                : NotFound();
         }
     }
+
 }
+
 

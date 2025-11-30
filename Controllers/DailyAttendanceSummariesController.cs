@@ -1,106 +1,75 @@
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using WebApplication3.Context;
+
+using WebApplication3.Models;
 using WebApplication3.Models.DTOs.DailyAttendanceSummaries;
+using WebApplication3.Repositories;
+using WebApplication3.Repositories.DailyAttendanceSummaryRepository;
 
-namespace WebApplication3.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class DailyAttendanceSummaryController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class DailyAttendanceSummariesController : ControllerBase
+    private readonly IDailyAttendanceSummaryRepository _repo;
+
+    public DailyAttendanceSummaryController(IDailyAttendanceSummaryRepository repo)
     {
-        private readonly Db _db;
+        _repo = repo;
+    }
 
-        public DailyAttendanceSummariesController(Db db)
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        return Ok(await _repo.GetAll());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(long id)
+    {
+        var item = await _repo.GetById(id);
+        return item == null ? NotFound() : Ok(item);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(DailyAttendanceSummaryCreateDto dto)
+    {
+        var model = new DailyAttendanceSummary
         {
-            _db = db;
-        }
+            EmployeeID = dto.EmployeeID,
+            WorkDate = dto.WorkDate,
+            Status = dto.Status,
+            TotalWorkMinutes = dto.TotalWorkMinutes,
+            LateMinutes = dto.LateMinutes,
+            OvertimeMinutes = dto.OvertimeMinutes
+        };
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<DailyAttendanceSummaryReadDto>>> GetAll([FromQuery] int? employeeId, [FromQuery] DateTime? workDate)
-        {
-            using IDbConnection conn = _db.CreateConnection();
+        return (await _repo.Create(model)) > 0
+            ? Ok("Daily summary created")
+            : BadRequest();
+    }
 
-            var sql = @"
-                SELECT SummaryID, EmployeeID, WorkDate, Status, TotalWorkMinutes, LateMinutes, OvertimeMinutes
-                FROM DailyAttendanceSummary
-                WHERE (@employeeId IS NULL OR EmployeeID = @employeeId)
-                  AND (@workDate IS NULL OR WorkDate = @workDate)
-                ORDER BY WorkDate DESC, SummaryID DESC";
+    [HttpPut]
+    public async Task<IActionResult> Update(DailyAttendanceSummaryUpdateDto dto)
+    {
+        var model = await _repo.GetById(dto.SummaryID);
+        if (model == null) return NotFound();
 
-            var rows = await conn.QueryAsync<DailyAttendanceSummaryReadDto>(sql, new { employeeId, workDate });
-            return Ok(rows);
-        }
+        model.EmployeeID = dto.EmployeeID;
+        model.WorkDate = dto.WorkDate;
+        model.Status = dto.Status;
+        model.TotalWorkMinutes = dto.TotalWorkMinutes;
+        model.LateMinutes = dto.LateMinutes;
+        model.OvertimeMinutes = dto.OvertimeMinutes;
 
-        [HttpGet("{id:long}")]
-        public async Task<ActionResult<DailyAttendanceSummaryReadDto>> GetById(long id)
-        {
-            using var conn = _db.CreateConnection();
+        return (await _repo.Update(model)) > 0
+            ? Ok("Daily summary updated")
+            : BadRequest();
+    }
 
-            var row = await conn.QueryFirstOrDefaultAsync<DailyAttendanceSummaryReadDto>(
-                @"SELECT SummaryID, EmployeeID, WorkDate, Status, TotalWorkMinutes, LateMinutes, OvertimeMinutes
-                  FROM DailyAttendanceSummary WHERE SummaryID=@id", new { id });
-
-            return row is null ? NotFound(new { message = "السجل غير موجود." }) : Ok(row);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(DailyAttendanceSummaryCreateDto dto)
-        {
-            using var conn = _db.CreateConnection();
-
-            var sql = @"
-                INSERT INTO DailyAttendanceSummary (EmployeeID, WorkDate, Status, TotalWorkMinutes, LateMinutes, OvertimeMinutes)
-                VALUES (@EmployeeID, @WorkDate, @Status, @TotalWorkMinutes, @LateMinutes, @OvertimeMinutes);
-                SELECT CAST(SCOPE_IDENTITY() AS BIGINT);";
-
-            var id = await conn.ExecuteScalarAsync<long>(sql, dto);
-
-            return CreatedAtAction(nameof(GetById), new { id }, new { SummaryID = id });
-        }
-
-        [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, DailyAttendanceSummaryUpdateDto dto)
-        {
-            using var conn = _db.CreateConnection();
-
-            var exists = await conn.ExecuteScalarAsync<int>(
-                "SELECT COUNT(1) FROM DailyAttendanceSummary WHERE SummaryID=@id", new { id });
-
-            if (exists == 0)
-                return NotFound(new { message = "السجل غير موجود." });
-
-            var sql = @"
-                UPDATE DailyAttendanceSummary
-                SET Status=@Status,
-                    TotalWorkMinutes=@TotalWorkMinutes,
-                    LateMinutes=@LateMinutes,
-                    OvertimeMinutes=@OvertimeMinutes
-                WHERE SummaryID=@id";
-
-            await conn.ExecuteAsync(sql, new
-            {
-                id,
-                dto.Status,
-                dto.TotalWorkMinutes,
-                dto.LateMinutes,
-                dto.OvertimeMinutes
-            });
-
-            return Ok(new { message = "تم التحديث." });
-        }
-
-        [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
-        {
-            using var conn = _db.CreateConnection();
-
-            var rows = await conn.ExecuteAsync("DELETE FROM DailyAttendanceSummary WHERE SummaryID=@id", new { id });
-
-            return rows == 0 ? NotFound(new { message = "السجل غير موجود." })
-                             : Ok(new { message = "تم الحذف." });
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        return (await _repo.Delete(id)) > 0
+            ? Ok("Daily summary deleted")
+            : NotFound();
     }
 }
-

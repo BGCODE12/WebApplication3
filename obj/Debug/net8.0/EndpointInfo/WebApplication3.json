@@ -633,44 +633,9 @@
         "tags": [
           "Departments"
         ],
-        "parameters": [
-          {
-            "name": "search",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartmentReadDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartmentReadDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartmentReadDto"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       },
@@ -702,61 +667,10 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Departments/{id}": {
-      "get": {
-        "tags": [
-          "Departments"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/DepartmentReadDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DepartmentReadDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DepartmentReadDto"
-                }
-              }
-            }
-          }
-        }
       },
       "put": {
         "tags": [
           "Departments"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -777,6 +691,29 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Departments/{id}": {
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1012,44 +949,10 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/Employees/{id}": {
-      "get": {
-        "tags": [
-          "Employees"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       },
       "put": {
         "tags": [
           "Employees"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -1075,8 +978,10 @@
             "description": "OK"
           }
         }
-      },
-      "delete": {
+      }
+    },
+    "/api/Employees/{id}/full": {
+      "get": {
         "tags": [
           "Employees"
         ],
@@ -1098,51 +1003,40 @@
         }
       }
     },
-    "/api/Employees/full": {
+    "/api/Employees/{id}": {
       "get": {
         "tags": [
           "Employees"
         ],
         "parameters": [
           {
-            "name": "search",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "from",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 1
+              "format": "int32"
             }
-          },
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employees"
+        ],
+        "parameters": [
           {
-            "name": "pageSize",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 20
+              "format": "int32"
             }
           }
         ],
@@ -1326,52 +1220,9 @@
         "tags": [
           "LeaveRequests"
         ],
-        "parameters": [
-          {
-            "name": "employeeId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveRequestReadDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveRequestReadDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveRequestReadDto"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       },
@@ -1403,110 +1254,10 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/LeaveRequests/employee/{employeeId}": {
-      "get": {
-        "tags": [
-          "LeaveRequests"
-        ],
-        "parameters": [
-          {
-            "name": "employeeId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveRequestReadDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveRequestReadDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveRequestReadDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/LeaveRequests/{id}": {
-      "get": {
-        "tags": [
-          "LeaveRequests"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/LeaveRequestReadDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LeaveRequestReadDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LeaveRequestReadDto"
-                }
-              }
-            }
-          }
-        }
       },
       "put": {
         "tags": [
           "LeaveRequests"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -1527,6 +1278,29 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/LeaveRequests/{id}": {
+      "get": {
+        "tags": [
+          "LeaveRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1555,121 +1329,6 @@
         }
       }
     },
-    "/api/LeaveRequests/submit": {
-      "post": {
-        "tags": [
-          "LeaveRequests"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestCreateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestCreateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestCreateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/LeaveRequests/{id}/approve": {
-      "put": {
-        "tags": [
-          "LeaveRequests"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestActionDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestActionDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestActionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/LeaveRequests/{id}/reject": {
-      "put": {
-        "tags": [
-          "LeaveRequests"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestActionDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestActionDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveRequestActionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/LeaveTypes": {
       "get": {
         "tags": [
@@ -1677,33 +1336,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveTypeReadDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveTypeReadDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaveTypeReadDto"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       },
@@ -1726,6 +1359,35 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/LeaveTypeCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "LeaveTypes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveTypeUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveTypeUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveTypeUpdateDto"
               }
             }
           }
@@ -1755,63 +1417,6 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/LeaveTypeReadDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LeaveTypeReadDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LeaveTypeReadDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "LeaveTypes"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveTypeUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveTypeUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/LeaveTypeUpdateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
             "description": "OK"
           }
         }
@@ -1838,30 +1443,17 @@
         }
       }
     },
-    "/api/ShiftDays/{shiftId}": {
+    "/api/ShiftDays": {
       "get": {
         "tags": [
           "ShiftDays"
-        ],
-        "parameters": [
-          {
-            "name": "shiftId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "responses": {
           "200": {
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/ShiftDays": {
+      },
       "post": {
         "tags": [
           "ShiftDays"
@@ -1890,23 +1482,10 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/ShiftDays/{id}": {
+      },
       "put": {
         "tags": [
           "ShiftDays"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -1927,6 +1506,29 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ShiftDays/{id}": {
+      "get": {
+        "tags": [
+          "ShiftDays"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1962,33 +1564,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ShiftDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ShiftDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ShiftDto"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       },
@@ -2011,6 +1587,35 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ShiftCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Shifts"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftUpdateDto"
               }
             }
           }
@@ -2040,63 +1645,6 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShiftDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShiftDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ShiftDto"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Shifts"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ShiftUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ShiftUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ShiftUpdateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
             "description": "OK"
           }
         }
@@ -2123,103 +1671,7 @@
         }
       }
     },
-    "/api/Users": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/{id}": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthRegisterDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthRegisterDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthRegisterDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/create": {
+    "/api/Users/register": {
       "post": {
         "tags": [
           "Users"
@@ -2228,17 +1680,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthRegisterDto"
+                "$ref": "#/components/schemas/UserRegisterDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthRegisterDto"
+                "$ref": "#/components/schemas/UserRegisterDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthRegisterDto"
+                "$ref": "#/components/schemas/UserRegisterDto"
               }
             }
           }
@@ -2250,121 +1702,30 @@
         }
       }
     },
-    "/api/Users/{id}/disable": {
-      "put": {
+    "/api/Users/login": {
+      "post": {
         "tags": [
           "Users"
         ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/{id}/enable": {
-      "put": {
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/{id}/move-department/{newDept}": {
-      "put": {
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "newDept",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/{id}/assign-employee/{employeeId}": {
-      "put": {
-        "tags": [
-          "Users"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "employeeId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Users/test-hash": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -2684,23 +2045,13 @@
         },
         "additionalProperties": false
       },
-      "DepartmentReadDto": {
+      "DepartmentUpdateDto": {
         "type": "object",
         "properties": {
           "departmentID": {
             "type": "integer",
             "format": "int32"
           },
-          "departmentName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DepartmentUpdateDto": {
-        "type": "object",
-        "properties": {
           "departmentName": {
             "type": "string",
             "nullable": true
@@ -2784,6 +2135,10 @@
       "EmployeeUpdateDto": {
         "type": "object",
         "properties": {
+          "employeeID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fullName": {
             "type": "string",
             "nullable": true
@@ -2854,16 +2209,6 @@
         },
         "additionalProperties": false
       },
-      "LeaveRequestActionDto": {
-        "type": "object",
-        "properties": {
-          "approvedByEmployeeID": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
       "LeaveRequestCreateDto": {
         "type": "object",
         "properties": {
@@ -2882,20 +2227,11 @@
           "endDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "approvedByEmployeeID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "LeaveRequestReadDto": {
+      "LeaveRequestUpdateDto": {
         "type": "object",
         "properties": {
           "leaveRequestID": {
@@ -2930,33 +2266,6 @@
         },
         "additionalProperties": false
       },
-      "LeaveRequestUpdateDto": {
-        "type": "object",
-        "properties": {
-          "leaveTypeID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "approvedByEmployeeID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "LeaveTypeCreateDto": {
         "type": "object",
         "properties": {
@@ -2967,23 +2276,13 @@
         },
         "additionalProperties": false
       },
-      "LeaveTypeReadDto": {
+      "LeaveTypeUpdateDto": {
         "type": "object",
         "properties": {
           "leaveTypeID": {
             "type": "integer",
             "format": "int32"
           },
-          "typeName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "LeaveTypeUpdateDto": {
-        "type": "object",
-        "properties": {
           "typeName": {
             "type": "string",
             "nullable": true
@@ -3033,6 +2332,14 @@
       "ShiftDayUpdateDto": {
         "type": "object",
         "properties": {
+          "shiftID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shiftDayID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "dayOfWeek": {
             "type": "integer",
             "format": "int32"
@@ -3043,7 +2350,7 @@
         },
         "additionalProperties": false
       },
-      "ShiftDto": {
+      "ShiftUpdateDto": {
         "type": "object",
         "properties": {
           "shiftID": {
@@ -3069,24 +2376,44 @@
         },
         "additionalProperties": false
       },
-      "ShiftUpdateDto": {
+      "UserLoginDto": {
         "type": "object",
         "properties": {
-          "shiftName": {
+          "username": {
             "type": "string",
             "nullable": true
           },
-          "startTime": {
+          "password": {
             "type": "string",
-            "format": "date-span"
-          },
-          "endTime": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserRegisterDto": {
+        "type": "object",
+        "properties": {
+          "username": {
             "type": "string",
-            "format": "date-span"
+            "nullable": true
           },
-          "gracePeriodMinutes": {
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeID": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
+          },
+          "departmentID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

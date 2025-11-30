@@ -367,33 +367,17 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.DepartmentsController",
+    "ContainingType": "DepartmentsController",
     "Method": "GetAll",
     "RelativePath": "api/Departments",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "search",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[WebApplication3.Models.DTOs.Departments.DepartmentReadDto, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.DepartmentsController",
+    "ContainingType": "DepartmentsController",
     "Method": "Create",
     "RelativePath": "api/Departments",
     "HttpMethod": "POST",
@@ -409,8 +393,24 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.DepartmentsController",
-    "Method": "GetById",
+    "ContainingType": "DepartmentsController",
+    "Method": "Update",
+    "RelativePath": "api/Departments",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "WebApplication3.Models.DTOs.Departments.DepartmentUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DepartmentsController",
+    "Method": "Get",
     "RelativePath": "api/Departments/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -422,41 +422,10 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "WebApplication3.Models.DTOs.Departments.DepartmentReadDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "WebApplication2.Controllers.DepartmentsController",
-    "Method": "Update",
-    "RelativePath": "api/Departments/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.Departments.DepartmentUpdateDto",
-        "IsRequired": true
-      }
-    ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.DepartmentsController",
+    "ContainingType": "DepartmentsController",
     "Method": "Delete",
     "RelativePath": "api/Departments/{id}",
     "HttpMethod": "DELETE",
@@ -571,7 +540,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.EmployeesController",
+    "ContainingType": "EmployeesController",
     "Method": "GetAll",
     "RelativePath": "api/Employees",
     "HttpMethod": "GET",
@@ -581,7 +550,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.EmployeesController",
+    "ContainingType": "EmployeesController",
     "Method": "Create",
     "RelativePath": "api/Employees",
     "HttpMethod": "POST",
@@ -597,7 +566,23 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.EmployeesController",
+    "ContainingType": "EmployeesController",
+    "Method": "Update",
+    "RelativePath": "api/Employees",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "WebApplication3.Models.DTOs.Employees.EmployeeUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EmployeesController",
     "Method": "Get",
     "RelativePath": "api/Employees/{id}",
     "HttpMethod": "GET",
@@ -613,28 +598,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.EmployeesController",
-    "Method": "Update",
-    "RelativePath": "api/Employees/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.Employees.EmployeeUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.EmployeesController",
+    "ContainingType": "EmployeesController",
     "Method": "Delete",
     "RelativePath": "api/Employees/{id}",
     "HttpMethod": "DELETE",
@@ -650,37 +614,17 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.EmployeesController",
-    "Method": "GetFullDetails",
-    "RelativePath": "api/Employees/full",
+    "ContainingType": "EmployeesController",
+    "Method": "GetFullProfile",
+    "RelativePath": "api/Employees/{id}/full",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "search",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "from",
-        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      },
-      {
-        "Name": "to",
-        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      },
-      {
-        "Name": "page",
+        "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "pageSize",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -785,38 +729,17 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
+    "ContainingType": "LeaveRequestsController",
     "Method": "GetAll",
     "RelativePath": "api/LeaveRequests",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "employeeId",
-        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestReadDto, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
+    "ContainingType": "LeaveRequestsController",
     "Method": "Create",
     "RelativePath": "api/LeaveRequests",
     "HttpMethod": "POST",
@@ -832,8 +755,24 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
-    "Method": "GetById",
+    "ContainingType": "LeaveRequestsController",
+    "Method": "Update",
+    "RelativePath": "api/LeaveRequests",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LeaveRequestsController",
+    "Method": "Get",
     "RelativePath": "api/LeaveRequests/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -845,41 +784,10 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestReadDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
-    "Method": "Update",
-    "RelativePath": "api/LeaveRequests/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestUpdateDto",
-        "IsRequired": true
-      }
-    ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
+    "ContainingType": "LeaveRequestsController",
     "Method": "Delete",
     "RelativePath": "api/LeaveRequests/{id}",
     "HttpMethod": "DELETE",
@@ -895,111 +803,17 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
-    "Method": "Approve",
-    "RelativePath": "api/LeaveRequests/{id}/approve",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestActionDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
-    "Method": "Reject",
-    "RelativePath": "api/LeaveRequests/{id}/reject",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestActionDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
-    "Method": "GetByEmployee",
-    "RelativePath": "api/LeaveRequests/employee/{employeeId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "employeeId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestReadDto, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.LeaveRequestsController",
-    "Method": "SubmitLeave",
-    "RelativePath": "api/LeaveRequests/submit",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.LeaveRequests.LeaveRequestCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.LeaveTypesController",
+    "ContainingType": "LeaveTypesController",
     "Method": "GetAll",
     "RelativePath": "api/LeaveTypes",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[WebApplication3.Models.DTOs.LeaveTypes.LeaveTypeReadDto, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveTypesController",
+    "ContainingType": "LeaveTypesController",
     "Method": "Create",
     "RelativePath": "api/LeaveTypes",
     "HttpMethod": "POST",
@@ -1015,8 +829,24 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveTypesController",
-    "Method": "GetById",
+    "ContainingType": "LeaveTypesController",
+    "Method": "Update",
+    "RelativePath": "api/LeaveTypes",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "WebApplication3.Models.DTOs.LeaveTypes.LeaveTypeUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LeaveTypesController",
+    "Method": "Get",
     "RelativePath": "api/LeaveTypes/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -1028,41 +858,10 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "WebApplication3.Models.DTOs.LeaveTypes.LeaveTypeReadDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.LeaveTypesController",
-    "Method": "Update",
-    "RelativePath": "api/LeaveTypes/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.LeaveTypes.LeaveTypeUpdateDto",
-        "IsRequired": true
-      }
-    ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.LeaveTypesController",
+    "ContainingType": "LeaveTypesController",
     "Method": "Delete",
     "RelativePath": "api/LeaveTypes/{id}",
     "HttpMethod": "DELETE",
@@ -1075,6 +874,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShiftDaysController",
+    "Method": "GetAll",
+    "RelativePath": "api/ShiftDays",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -1096,19 +905,30 @@
   {
     "ContainingType": "ShiftDaysController",
     "Method": "Update",
-    "RelativePath": "api/ShiftDays/{id}",
+    "RelativePath": "api/ShiftDays",
     "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "WebApplication3.Models.DTOs.ShiftDay.ShiftDayUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShiftDaysController",
+    "Method": "Get",
+    "RelativePath": "api/ShiftDays/{id}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.ShiftDay.ShiftDayUpdateDto",
         "IsRequired": true
       }
     ],
@@ -1131,43 +951,17 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ShiftDaysController",
-    "Method": "GetByShift",
-    "RelativePath": "api/ShiftDays/{shiftId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "shiftId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication2.Controllers.ShiftsController",
+    "ContainingType": "ShiftsController",
     "Method": "GetAll",
     "RelativePath": "api/Shifts",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[WebApplication3.Models.DTOs.Shift.ShiftDto, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.ShiftsController",
+    "ContainingType": "ShiftsController",
     "Method": "Create",
     "RelativePath": "api/Shifts",
     "HttpMethod": "POST",
@@ -1183,44 +977,13 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.ShiftsController",
-    "Method": "GetById",
-    "RelativePath": "api/Shifts/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "WebApplication3.Models.DTOs.Shift.ShiftDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "WebApplication2.Controllers.ShiftsController",
+    "ContainingType": "ShiftsController",
     "Method": "Update",
-    "RelativePath": "api/Shifts/{id}",
+    "RelativePath": "api/Shifts",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
       {
         "Name": "dto",
         "Type": "WebApplication3.Models.DTOs.Shift.ShiftUpdateDto",
@@ -1230,7 +993,23 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication2.Controllers.ShiftsController",
+    "ContainingType": "ShiftsController",
+    "Method": "Get",
+    "RelativePath": "api/Shifts/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShiftsController",
     "Method": "Delete",
     "RelativePath": "api/Shifts/{id}",
     "HttpMethod": "DELETE",
@@ -1246,166 +1025,35 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "GetAll",
-    "RelativePath": "api/Users",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "GetById",
-    "RelativePath": "api/Users/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "Update",
-    "RelativePath": "api/Users/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.Auth.AuthRegisterDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "Delete",
-    "RelativePath": "api/Users/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "AssignEmployee",
-    "RelativePath": "api/Users/{id}/assign-employee/{employeeId}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "employeeId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "Disable",
-    "RelativePath": "api/Users/{id}/disable",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "Enable",
-    "RelativePath": "api/Users/{id}/enable",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "MoveToDepartment",
-    "RelativePath": "api/Users/{id}/move-department/{newDept}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "newDept",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "Create",
-    "RelativePath": "api/Users/create",
+    "ContainingType": "UsersController",
+    "Method": "Login",
+    "RelativePath": "api/Users/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "WebApplication3.Models.DTOs.Auth.AuthRegisterDto",
+        "Type": "WebApplication3.Models.DTOs.Users.UserLoginDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.UsersController",
-    "Method": "TestHash",
-    "RelativePath": "api/Users/test-hash",
-    "HttpMethod": "GET",
+    "ContainingType": "UsersController",
+    "Method": "Register",
+    "RelativePath": "api/Users/register",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "WebApplication3.Models.DTOs.Users.UserRegisterDto",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   }
 ]

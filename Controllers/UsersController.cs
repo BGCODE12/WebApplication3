@@ -1,203 +1,82 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using WebApplication3.Context;
-using WebApplication3.Helpers;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WebApplication3.Models;
-using WebApplication3.Models.DTOs.Auth;
+using WebApplication3.Models.DTOs.Users;
+using WebApplication3.Repositories;
+using WebApplication3.Repositories.UserRepository;
 
-namespace WebApplication3.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    [Authorize(Roles = "SuperAdmin")] // 🔐 السوبر أدمن فقط
-    public class UsersController : ControllerBase
+    private readonly IUserRepository _repo;
+    private readonly IConfiguration _config;
+
+    public UsersController(IUserRepository repo, IConfiguration config)
     {
-        private readonly Db _db;
+        _repo = repo;
+        _config = config;
+    }
 
-        public UsersController(Db db)
+    // ========= REGISTER =========
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(UserRegisterDto dto)
+    {
+        var existing = await _repo.GetByUsername(dto.Username);
+        if (existing != null)
+            return BadRequest("Username already exists");
+
+        var user = new User
         {
-            _db = db;
-        }
+            Username = dto.Username,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            Role = dto.Role,
+            EmployeeID = dto.EmployeeID,
+            DepartmentID = dto.DepartmentID,
+            IsActive = true,
+            CreatedAt = DateTime.Now
+        };
 
-        // ===================== 1) عرض جميع المستخدمين =====================
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        await _repo.Create(user);
+        return Ok("User Registered");
+    }
+
+    // ========= LOGIN =========
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserLoginDto dto)
+    {
+        var user = await _repo.GetByUsername(dto.Username);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            return Unauthorized("Invalid username or password");
+
+        var token = GenerateJwtToken(user);
+        return Ok(new { Token = token });
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+
+        var claims = new[]
         {
-            using IDbConnection conn = _db.CreateConnection();
-            var sql = "SELECT * FROM Users";
-            var users = await conn.QueryAsync<User>(sql);
-            return Ok(users);
-        }
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim("UserID", user.UserID.ToString())
+        };
 
-        // ===================== 2) عرض مستخدم واحد =====================
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-            var user = await conn.QueryFirstOrDefaultAsync<User>(
-                "SELECT * FROM Users WHERE UserID = @id", new { id });
+        var creds = new SigningCredentials(
+            new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256);
 
-            return user is null ? NotFound() : Ok(user);
-        }
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(7),
+            signingCredentials: creds);
 
-        // ===================== 3) إنشاء مستخدم جديد =====================
-        [HttpPost("create")]
-        public async Task<IActionResult> Create(AuthRegisterDto dto)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            // تحقق من عدم تكرار الاسم
-            var exists = await conn.ExecuteScalarAsync<int>(
-                "SELECT COUNT(1) FROM Users WHERE Username = @Username",
-                new { dto.Username });
-
-            if (exists > 0)
-                return Conflict(new { message = "اسم المستخدم موجود مسبقاً." });
-
-            var passwordHash = PasswordHasher.HashPassword(dto.Password);
-
-            var sql = @"
-                INSERT INTO Users (Username, PasswordHash, Role, EmployeeID, DepartmentID, IsActive)
-                VALUES (@Username, @PasswordHash, @Role, @EmployeeID, @DepartmentID, 1);
-                SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-            var id = await conn.ExecuteScalarAsync<int>(sql, new
-            {
-                dto.Username,
-                PasswordHash = passwordHash,
-                dto.Role,
-                dto.EmployeeID,
-                dto.DepartmentID
-            });
-
-            return Ok(new { message = "تم إنشاء المستخدم بنجاح.", UserID = id });
-        }
-
-        // ===================== 4) تعديل مستخدم =====================
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, AuthRegisterDto dto)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var user = await conn.QueryFirstOrDefaultAsync<User>(
-                "SELECT * FROM Users WHERE UserID = @id", new { id });
-
-            if (user == null)
-                return NotFound(new { message = "المستخدم غير موجود." });
-
-            string newPasswordHash = user.PasswordHash;
-
-            if (!string.IsNullOrWhiteSpace(dto.Password))
-                newPasswordHash = PasswordHasher.HashPassword(dto.Password);
-
-            var sql = @"
-                UPDATE Users SET
-                    Username = @Username,
-                    PasswordHash = @PasswordHash,
-                    Role = @Role,
-                    EmployeeID = @EmployeeID,
-                    DepartmentID = @DepartmentID
-                WHERE UserID = @id";
-
-            await conn.ExecuteAsync(sql, new
-            {
-                id,
-                dto.Username,
-                PasswordHash = newPasswordHash,
-                dto.Role,
-                dto.EmployeeID,
-                dto.DepartmentID
-            });
-
-            return Ok(new { message = "تم تحديث المستخدم بنجاح." });
-        }
-
-        // ===================== 5) تعطيل المستخدم =====================
-        [HttpPut("{id:int}/disable")]
-        public async Task<IActionResult> Disable(int id)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var rows = await conn.ExecuteAsync(
-                "UPDATE Users SET IsActive = 0 WHERE UserID = @id",
-                new { id });
-
-            if (rows == 0)
-                return NotFound(new { message = "المستخدم غير موجود." });
-
-            return Ok(new { message = "تم تعطيل المستخدم." });
-        }
-
-        // ===================== 6) تفعيل المستخدم =====================
-        [HttpPut("{id:int}/enable")]
-        public async Task<IActionResult> Enable(int id)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var rows = await conn.ExecuteAsync(
-                "UPDATE Users SET IsActive = 1 WHERE UserID = @id",
-                new { id });
-
-            if (rows == 0)
-                return NotFound(new { message = "المستخدم غير موجود." });
-
-            return Ok(new { message = "تم تفعيل المستخدم." });
-        }
-
-        // ===================== 7) نقل مستخدم إلى قسم آخر =====================
-        [HttpPut("{id:int}/move-department/{newDept:int}")]
-        public async Task<IActionResult> MoveToDepartment(int id, int newDept)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var sql = "UPDATE Users SET DepartmentID = @newDept WHERE UserID = @id";
-            var rows = await conn.ExecuteAsync(sql, new { id, newDept });
-
-            if (rows == 0)
-                return NotFound(new { message = "المستخدم غير موجود." });
-
-            return Ok(new { message = "تم نقل المستخدم إلى قسم جديد." });
-        }
-
-        // ===================== 8) تغيير EmployeeID للمستخدم =====================
-        [HttpPut("{id:int}/assign-employee/{employeeId:int}")]
-        public async Task<IActionResult> AssignEmployee(int id, int employeeId)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var sql = "UPDATE Users SET EmployeeID = @employeeId WHERE UserID = @id";
-            var rows = await conn.ExecuteAsync(sql, new { id, employeeId });
-
-            if (rows == 0)
-                return NotFound(new { message = "المستخدم غير موجود." });
-
-            return Ok(new { message = "تم ربط المستخدم بالموظف." });
-        }
-
-        // ===================== 9) حذف المستخدم =====================
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            using IDbConnection conn = _db.CreateConnection();
-
-            var rows = await conn.ExecuteAsync(
-                "DELETE FROM Users WHERE UserID = @id",
-                new { id });
-
-            if (rows == 0)
-                return NotFound(new { message = "المستخدم غير موجود." });
-
-            return Ok(new { message = "تم حذف المستخدم بنجاح." });
-        }
-        [HttpGet("test-hash")]
-        public IActionResult TestHash()
-        {
-            string pwd = "123";
-            string hash = PasswordHasher.HashPassword(pwd);
-            return Ok(new { pwd, hash });
-        }
-
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

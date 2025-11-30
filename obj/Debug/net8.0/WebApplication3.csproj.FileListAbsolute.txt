@@ -152,3 +152,4 @@ C:\Users\RYADAH4\source\repos\WebApplication3\WebApplication3\obj\Debug\net8.0\s
 C:\Users\RYADAH4\source\repos\WebApplication3\WebApplication3\obj\Debug\net8.0\WebApplication3.sourcelink.json
 C:\Users\RYADAH4\source\repos\WebApplication3\WebApplication3\bin\Debug\net8.0\libman.json
 C:\Users\RYADAH4\source\repos\WebApplication3\WebApplication3\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\RYADAH4\source\repos\WebApplication3\WebApplication3\bin\Debug\net8.0\BCrypt.Net-Next.dll

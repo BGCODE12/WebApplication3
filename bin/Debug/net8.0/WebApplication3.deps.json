@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "WebApplication3/1.0.0": {
         "dependencies": {
+          "BCrypt.Net-Next": "4.0.3",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
           "Microsoft.Data.SqlClient": "7.0.0-preview2.25289.6",
           "Swashbuckle.AspNetCore": "6.6.2",
@@ -40,6 +41,14 @@
           "lib/net8.0/Azure.Identity.dll": {
             "assemblyVersion": "1.16.0.0",
             "fileVersion": "1.1600.25.45906"
+          }
+        }
+      },
+      "BCrypt.Net-Next/4.0.3": {
+        "runtime": {
+          "lib/net6.0/BCrypt.Net-Next.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.0.3.0"
           }
         }
       },
@@ -1753,6 +1762,13 @@
       "sha512": "sha512-ZTtJt9N1hW9S7JRt05aBy894mp9uK4KbfcVcg2OndKbph/6RCcDEisdBV9iNHiNDSXXQRR52SAYy8RhknQ1xEA==",
       "path": "azure.identity/1.16.0",
       "hashPath": "azure.identity.1.16.0.nupkg.sha512"
+    },
+    "BCrypt.Net-Next/4.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "path": "bcrypt.net-next/4.0.3",
+      "hashPath": "bcrypt.net-next.4.0.3.nupkg.sha512"
     },
     "Dapper/2.0.30": {
       "type": "package",

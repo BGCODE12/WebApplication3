@@ -104,9 +104,12 @@ namespace WebApplication3.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserID.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(
+                    "Employee Id", user.EmployeeID.ToString()),
+                new Claim("UserName", user.Username),
+                new Claim("Rols", user.Role),
+                new Claim("Deprtment Id",user.DepartmentID.ToString())
+
             };
 
             if (user.EmployeeID.HasValue)
