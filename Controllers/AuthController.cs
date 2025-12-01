@@ -68,28 +68,29 @@ namespace WebApplication3.Controllers
         // ===============================
         private string GenerateJwtToken(User user)
         {
-            var roleName = ConvertRoleToName(user.Role);
-
             var claims = new List<Claim>
-            {
-                new Claim("UserID", user.UserID.ToString()),
-                new Claim("Role", roleName), 
-                new Claim("EmployeeID", user.EmployeeID?.ToString() ?? ""),
-                new Claim("DepartmentID", user.DepartmentID?.ToString() ?? "")
-            };
+    {
+        new Claim("UserID", user.UserID.ToString()),
+        new Claim("Role", user.Role.ToString()),
+        new Claim("EmployeeID", user.EmployeeID?.ToString() ?? ""),
+        new Claim("DepartmentID", user.DepartmentID?.ToString() ?? "")
+    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            int expireMinutes = int.Parse(_config["Jwt:ExpireMinutes"]);
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(expireMinutes),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
