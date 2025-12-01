@@ -15,11 +15,36 @@ public class AttendanceSessionRepository : IAttendanceSessionRepository
 
     public async Task<IEnumerable<AttendanceSession>> GetAll()
     {
-        return await _db.CreateConnection().QueryAsync<AttendanceSession>(
-            "GetAllAttendanceSessions",
-            commandType: CommandType.StoredProcedure
-        );
+        var sql = @"
+        SELECT s.*, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceSessions s
+        JOIN Employees e ON s.EmployeeID = e.EmployeeID";
+
+        return await _db.CreateConnection().QueryAsync<AttendanceSession>(sql);
     }
+    public async Task<IEnumerable<AttendanceSession>> GetByDepartment(int deptId)
+    {
+        var sql = @"
+        SELECT s.*, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceSessions s
+        JOIN Employees e ON s.EmployeeID = e.EmployeeID
+        WHERE e.DepartmentID = @deptId";
+
+        return await _db.CreateConnection()
+            .QueryAsync<AttendanceSession>(sql, new { deptId });
+    }
+    public async Task<IEnumerable<AttendanceSession>> GetByEmployee(int empId)
+    {
+        var sql = @"
+        SELECT s.*, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceSessions s
+        JOIN Employees e ON s.EmployeeID = e.EmployeeID
+        WHERE s.EmployeeID = @empId";
+
+        return await _db.CreateConnection()
+            .QueryAsync<AttendanceSession>(sql, new { empId });
+    }
+
 
     public async Task<AttendanceSession?> GetById(long id)
     {
@@ -71,4 +96,5 @@ public class AttendanceSessionRepository : IAttendanceSessionRepository
             commandType: CommandType.StoredProcedure
         );
     }
+
 }

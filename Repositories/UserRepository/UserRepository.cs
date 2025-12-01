@@ -13,17 +13,18 @@ public class UserRepository : IUserRepository
         _db = db;
     }
 
+    // ========== GET BY USERNAME ==========
     public async Task<User?> GetByUsername(string username)
     {
-        return await _db.CreateConnection().QueryFirstOrDefaultAsync<User>(
-            "GetUserByUsername",
-            new { Username = username },
-            commandType: CommandType.StoredProcedure);
+        string query = "SELECT * FROM Users WHERE Username = @Username";
+        return await _db.CreateConnection()
+            .QueryFirstOrDefaultAsync<User>(query, new { Username = username });
     }
 
-    public async Task<int> Create(User user)
+    // ========== CREATE USER (returns bool) ==========
+    public async Task<bool> Create(User user)
     {
-        return await _db.CreateConnection().ExecuteAsync(
+        int rows = await _db.CreateConnection().ExecuteAsync(
             "CreateUser",
             new
             {
@@ -35,8 +36,11 @@ public class UserRepository : IUserRepository
                 user.IsActive
             },
             commandType: CommandType.StoredProcedure);
+
+        return rows > 0;
     }
 
+    // ========== GET ALL USERS ==========
     public async Task<IEnumerable<User>> GetAll()
     {
         return await _db.CreateConnection().QueryAsync<User>(
@@ -44,9 +48,10 @@ public class UserRepository : IUserRepository
             commandType: CommandType.StoredProcedure);
     }
 
-    public async Task<int> Update(User user)
+    // ========== UPDATE USER (returns bool) ==========
+    public async Task<bool> Update(User user)
     {
-        return await _db.CreateConnection().ExecuteAsync(
+        int rows = await _db.CreateConnection().ExecuteAsync(
             "UpdateUser",
             new
             {
@@ -58,13 +63,26 @@ public class UserRepository : IUserRepository
                 user.IsActive
             },
             commandType: CommandType.StoredProcedure);
+
+        return rows > 0;
     }
 
-    public async Task<int> Delete(int id)
+    // ========== DELETE USER (returns bool) ==========
+    public async Task<bool> Delete(int id)
     {
-        return await _db.CreateConnection().ExecuteAsync(
+        int rows = await _db.CreateConnection().ExecuteAsync(
             "DeleteUser",
             new { UserID = id },
             commandType: CommandType.StoredProcedure);
+
+        return rows > 0;
+    }
+
+    // ========== GET USER BY ID ==========
+    public async Task<User?> GetById(int id)
+    {
+        string query = "SELECT * FROM Users WHERE UserID = @Id";
+        return await _db.CreateConnection()
+            .QueryFirstOrDefaultAsync<User>(query, new { Id = id });
     }
 }

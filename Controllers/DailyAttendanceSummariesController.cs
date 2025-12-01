@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Security.Claims;
 using WebApplication3.Models;
 using WebApplication3.Models.DTOs.DailyAttendanceSummaries;
-using WebApplication3.Repositories;
 using WebApplication3.Repositories.DailyAttendanceSummaryRepository;
 
 [ApiController]
@@ -16,20 +16,83 @@ public class DailyAttendanceSummaryController : ControllerBase
         _repo = repo;
     }
 
+    // ================================
+    // Helpers (Role / Employee / Dept)
+    // ================================
+    private string? GetRole() => User.FindFirstValue("Role");
+
+    private int? GetEmployeeId() =>
+        int.TryParse(User.FindFirstValue("EmployeeID"), out var id) ? id : null;
+
+    private int? GetDeptId() =>
+        int.TryParse(User.FindFirstValue("DepartmentID"), out var id) ? id : null;
+
+
+    // ============================================
+    // SUPERADMIN + ADMIN: Get All Summaries
+    // UNITADMIN: Only his department
+    // EMPLOYEE: Only his own
+    // ============================================
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _repo.GetAll());
+        var role = GetRole();
+
+        if (role == "SuperAdmin" || role == "Admin")
+            return Ok(await _repo.GetAll());
+
+        if (role == "UnitAdmin")
+            return Ok(await _repo.GetByDepartment(GetDeptId()!.Value));
+
+        if (role == "Employee")
+            return Ok(await _repo.GetByEmployee(GetEmployeeId()!.Value));
+
+        return Unauthorized();
     }
 
+
+    // ============================================
+    // GET ONE SUMMARY
+    // ============================================
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> Get(long id)
     {
         var item = await _repo.GetById(id);
-        return item == null ? NotFound() : Ok(item);
+        if (item == null) return NotFound();
+
+        var role = GetRole();
+
+        if (role == "SuperAdmin" || role == "Admin")
+            return Ok(item);
+
+        if (role == "UnitAdmin")
+        {
+            if (item.EmployeeDeptID == GetDeptId())
+                return Ok(item);
+
+            return Unauthorized("Not your department");
+        }
+
+        if (role == "Employee")
+        {
+            if (item.EmployeeID == GetEmployeeId())
+                return Ok(item);
+
+            return Unauthorized("Not your data");
+        }
+
+        return Unauthorized();
     }
 
+
+    // ============================================
+    // CREATE SUMMARY
+    // Only System/Admin or Scheduler should create
+    // ============================================
     [HttpPost]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> Create(DailyAttendanceSummaryCreateDto dto)
     {
         var model = new DailyAttendanceSummary
@@ -47,7 +110,12 @@ public class DailyAttendanceSummaryController : ControllerBase
             : BadRequest();
     }
 
+
+    // ============================================
+    // UPDATE SUMMARY
+    // ============================================
     [HttpPut]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> Update(DailyAttendanceSummaryUpdateDto dto)
     {
         var model = await _repo.GetById(dto.SummaryID);
@@ -65,7 +133,12 @@ public class DailyAttendanceSummaryController : ControllerBase
             : BadRequest();
     }
 
+
+    // ============================================
+    // DELETE SUMMARY
+    // ============================================
     [HttpDelete("{id}")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> Delete(long id)
     {
         return (await _repo.Delete(id)) > 0

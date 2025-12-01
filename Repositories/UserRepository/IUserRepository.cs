@@ -5,9 +5,11 @@ namespace WebApplication3.Repositories.UserRepository
     public interface IUserRepository
     {
         Task<User?> GetByUsername(string username);
-        Task<int> Create(User user);
+        Task<bool> Create(User user);
         Task<IEnumerable<User>> GetAll();
-        Task<int> Update(User user);
-        Task<int> Delete(int id);
+        Task<bool> Update(User user);
+        Task<bool> Delete(int id);
+        Task<User?> GetById(int id);
+
     }
 }

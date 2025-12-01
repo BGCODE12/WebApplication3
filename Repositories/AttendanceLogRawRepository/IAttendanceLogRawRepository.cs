@@ -9,5 +9,13 @@ namespace WebApplication3.Repositories.AttendanceLogRawRepository
         Task<IEnumerable<AttendanceLogRaw>> GetByDeviceUserID(string deviceUserID);
         Task<IEnumerable<AttendanceLogRaw>> GetUnprocessed();
         Task<int> MarkProcessed(long id);
+        Task<IEnumerable<AttendanceLogRaw>> GetByDepartment(int departmentId);
+        Task<IEnumerable<AttendanceLogRaw>> GetByEmployee(int employeeId);
+        Task<IEnumerable<AttendanceLogRaw>> GetDeviceUserByDepartment(string deviceUserId, int departmentId);
+        
+        
+       
+
+
     }
 }

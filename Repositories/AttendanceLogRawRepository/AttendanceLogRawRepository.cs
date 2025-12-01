@@ -13,46 +13,113 @@ public class AttendanceLogRawRepository : IAttendanceLogRawRepository
         _db = db;
     }
 
+    // ================================
+    // GET ALL
+    // ================================
     public async Task<IEnumerable<AttendanceLogRaw>> GetAll()
     {
-        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(
-            "GetAllAttendanceLogs",
-            commandType: CommandType.StoredProcedure
-        );
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID";
+
+        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(sql);
     }
 
+    // ================================
+    // GET BY ID
+    // ================================
     public async Task<AttendanceLogRaw?> GetById(long id)
     {
-        return await _db.CreateConnection().QueryFirstOrDefaultAsync<AttendanceLogRaw>(
-            "GetAttendanceLogById",
-            new { LogID = id },
-            commandType: CommandType.StoredProcedure
-        );
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID
+        WHERE r.LogID = @Id";
+
+        return await _db.CreateConnection().QueryFirstOrDefaultAsync<AttendanceLogRaw>(sql, new { Id = id });
     }
 
+    // ================================
+    // GET BY DeviceUserID
+    // ================================
     public async Task<IEnumerable<AttendanceLogRaw>> GetByDeviceUserID(string deviceUserID)
     {
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID
+        WHERE r.DeviceUserID = @DeviceUserID";
+
+        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(sql, new { DeviceUserID = deviceUserID });
+    }
+
+    // ================================
+    // GET BY DEPARTMENT
+    // ================================
+    public async Task<IEnumerable<AttendanceLogRaw>> GetByDepartment(int departmentId)
+    {
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID
+        WHERE e.DepartmentID = @DeptID";
+
+        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(sql, new { DeptID = departmentId });
+    }
+
+    // ================================
+    // GET BY EMPLOYEE
+    // ================================
+    public async Task<IEnumerable<AttendanceLogRaw>> GetByEmployee(int employeeId)
+    {
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID
+        WHERE e.EmployeeID = @EmpID";
+
+        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(sql, new { EmpID = employeeId });
+    }
+
+    // ================================
+    // GET DEVICE USER BY DEPARTMENT
+    // ================================
+    public async Task<IEnumerable<AttendanceLogRaw>> GetDeviceUserByDepartment(string deviceUserID, int departmentId)
+    {
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID
+        WHERE r.DeviceUserID = @UserID AND e.DepartmentID = @DeptID";
+
         return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(
-            "GetAttendanceLogsByDeviceUserID",
-            new { DeviceUserID = deviceUserID },
-            commandType: CommandType.StoredProcedure
+            sql,
+            new { UserID = deviceUserID, DeptID = departmentId }
         );
     }
 
+    // ================================
+    // GET UNPROCESSED
+    // ================================
     public async Task<IEnumerable<AttendanceLogRaw>> GetUnprocessed()
     {
-        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(
-            "GetUnprocessedAttendanceLogs",
-            commandType: CommandType.StoredProcedure
-        );
+        var sql = @"
+        SELECT r.*, e.EmployeeID, e.DepartmentID AS EmployeeDeptID
+        FROM AttendanceLogRaw r
+        JOIN Employees e ON r.DeviceUserID = e.DeviceUserID
+        WHERE r.IsProcessed = 0";
+
+        return await _db.CreateConnection().QueryAsync<AttendanceLogRaw>(sql);
     }
 
+    // ================================
+    // MARK PROCESSED
+    // ================================
     public async Task<int> MarkProcessed(long id)
     {
-        return await _db.CreateConnection().ExecuteAsync(
-            "MarkAttendanceLogProcessed",
-            new { LogID = id },
-            commandType: CommandType.StoredProcedure
-        );
+        var sql = "UPDATE AttendanceLogRaw SET IsProcessed = 1 WHERE LogID = @Id";
+
+        return await _db.CreateConnection().ExecuteAsync(sql, new { Id = id });
     }
 }

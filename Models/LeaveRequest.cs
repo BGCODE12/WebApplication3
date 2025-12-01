@@ -9,5 +9,7 @@
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = string.Empty;
         public int? ApprovedByEmployeeID { get; set; }
+
+        public int EmployeeDeptID { get; set; }
     }
 }

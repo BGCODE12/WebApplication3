@@ -8,5 +8,6 @@
         public DateTime CheckInTime { get; set; }
         public DateTime CheckOutTime { get; set; }
         public int DurationMinutes { get; set; }
+        public int EmployeeDeptID { get; set; }
     }
 }

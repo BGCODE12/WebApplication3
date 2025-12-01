@@ -92,5 +92,11 @@ public class EmployeeRepository : IEmployeeRepository
 
         return result;
     }
+    public async Task<IEnumerable<Employee>> GetByDepartment(int departmentId)
+    {
+        var query = "SELECT * FROM Employees WHERE DepartmentID = @DepartmentID";
+        return await _db.CreateConnection().QueryAsync<Employee>(query, new { DepartmentID = departmentId });
+    }
+
 
 }

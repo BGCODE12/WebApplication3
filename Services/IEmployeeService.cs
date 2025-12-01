@@ -11,7 +11,8 @@ namespace WebApplication3.Services
         Task<bool> Create(EmployeeCreateDto dto);
         Task<bool> Update(EmployeeUpdateDto dto);
         Task<bool> Delete(int id);
-        
+        Task<IEnumerable<Employee>> GetByDepartment(int departmentId);
+
 
     }
 }

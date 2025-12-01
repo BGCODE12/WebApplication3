@@ -9,5 +9,8 @@ namespace WebApplication3.Repositories.AttendanceSessionRepository
         Task<int> Create(AttendanceSession model);
         Task<int> Update(AttendanceSession model);
         Task<int> Delete(long id);
+        Task<IEnumerable<AttendanceSession>> GetByDepartment(int deptId);
+        Task<IEnumerable<AttendanceSession>> GetByEmployee(int empId);
+
     }
 }

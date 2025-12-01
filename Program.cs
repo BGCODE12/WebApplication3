@@ -18,7 +18,40 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddSingleton<Db>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Attendance API",
+        Version = "v1"
+    });
+
+    // 🔥 تعريف نظام الأمان JWT في Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "ضع كلمة Bearer ثم فراغ ثم التوكن.\nمثال: Bearer eyJhbGciOiJIUz...",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
@@ -49,31 +82,42 @@ builder.Services.AddCors(options =>
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 
-builder.Services
-    .AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+        )
+    };
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdminOnly", p => p.RequireClaim("Role", "0"));
+    options.AddPolicy("AdminOnly", p => p.RequireClaim("Role", "1"));
+    options.AddPolicy("EmployeeOnly", p => p.RequireClaim("Role", "2"));
+    options.AddPolicy("UnitAdminOnly", p => p.RequireClaim("Role", "3"));
 
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,      // لأنك لا تستخدم Issuer
-            ValidateAudience = false,    // لأنك لا تستخدم Audience
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.Zero
-        };
-    });
+    // سياسات مركبة
+    options.AddPolicy("AdminOrSuperAdmin", p => p.RequireClaim("Role", "0", "1"));
+    options.AddPolicy("UnitAdminOrSuperAdmin", p => p.RequireClaim("Role", "0", "3"));
+});
+
+
+
 
 builder.Services.AddAuthorization();
-
-
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

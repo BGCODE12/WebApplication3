@@ -9,5 +9,7 @@
         public int? TotalWorkMinutes { get; set; }
         public int? LateMinutes { get; set; }
         public int? OvertimeMinutes { get; set; }
+        public int EmployeeDeptID { get; set; }
+
     }
 }

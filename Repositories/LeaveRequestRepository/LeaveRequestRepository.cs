@@ -30,6 +30,26 @@ public class LeaveRequestRepository : ILeaveRequestRepository
         );
     }
 
+    // 🔥 الطلبات حسب الموظف
+    public async Task<IEnumerable<LeaveRequest>> GetByEmployee(int employeeId)
+    {
+        return await _db.CreateConnection().QueryAsync<LeaveRequest>(
+            "GetLeaveRequestsByEmployee",
+            new { EmployeeID = employeeId },
+            commandType: CommandType.StoredProcedure
+        );
+    }
+
+    // 🔥 الطلبات حسب القسم (لوحدة المسؤول)
+    public async Task<IEnumerable<LeaveRequest>> GetByDepartment(int departmentId)
+    {
+        return await _db.CreateConnection().QueryAsync<LeaveRequest>(
+            "GetLeaveRequestsByDepartment",
+            new { DepartmentID = departmentId },
+            commandType: CommandType.StoredProcedure
+        );
+    }
+
     public async Task<int> Create(LeaveRequest model)
     {
         return await _db.CreateConnection().ExecuteAsync(

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApplication3.Models;
 using WebApplication3.Models.DTOs.ShiftDay;
 
@@ -13,20 +15,37 @@ public class ShiftDaysController : ControllerBase
         _repo = repo;
     }
 
+    // ===============================
+    // Helpers → لاستخراج الدور من JWT
+    // ===============================
+    private string? GetRole() => User.FindFirstValue("Role");
+
+    // ===============================
+    // GET ALL — الجميع يستطيع القراءة
+    // ===============================
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _repo.GetAll());
     }
 
+    // ===============================
+    // GET ONE — الجميع يستطيع القراءة
+    // ===============================
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> Get(int id)
     {
         var shiftDay = await _repo.GetById(id);
         return shiftDay == null ? NotFound() : Ok(shiftDay);
     }
 
+    // ===============================
+    // CREATE — SuperAdmin + Admin فقط
+    // ===============================
     [HttpPost]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> Create(ShiftDayCreateDto dto)
     {
         var model = new ShiftDay
@@ -41,7 +60,11 @@ public class ShiftDaysController : ControllerBase
             : BadRequest();
     }
 
+    // ===============================
+    // UPDATE — SuperAdmin + Admin فقط
+    // ===============================
     [HttpPut]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> Update(ShiftDayUpdateDto dto)
     {
         var model = await _repo.GetById(dto.ShiftDayID);
@@ -56,7 +79,11 @@ public class ShiftDaysController : ControllerBase
             : BadRequest();
     }
 
+    // ===============================
+    // DELETE — SuperAdmin فقط
+    // ===============================
     [HttpDelete("{id}")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> Delete(int id)
     {
         return (await _repo.Delete(id)) > 0

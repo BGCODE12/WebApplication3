@@ -9,5 +9,7 @@ namespace WebApplication3.Repositories.LeaveRequestRepository
         Task<int> Create(LeaveRequest model);
         Task<int> Update(LeaveRequest model);
         Task<int> Delete(int id);
+        Task<IEnumerable<LeaveRequest>> GetByEmployee(int employeeId);
+        Task<IEnumerable<LeaveRequest>> GetByDepartment(int departmentId);
     }
 }

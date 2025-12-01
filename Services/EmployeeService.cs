@@ -58,5 +58,10 @@ public class EmployeeService : IEmployeeService
     {
         return await _repo.GetFullProfile(id);
     }
+    public async Task<IEnumerable<Employee>> GetByDepartment(int departmentId)
+    {
+        return await _repo.GetByDepartment(departmentId);
+    }
+
 
 }
