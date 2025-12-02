@@ -20,7 +20,10 @@ namespace WebApplication3.Controllers
         }
 
         // Helper to get Role from JWT
-        private string? GetRole() => User.FindFirstValue("Role");
+        private string? GetRole()
+        {
+            return User.FindFirstValue(ClaimTypes.Role);
+        }
 
 
         // =====================================================

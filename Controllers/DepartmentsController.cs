@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication3.Helpers;
+using System.Security.Claims;
 using WebApplication3.Models.DTOs.Departments;
 using WebApplication3.Services;
 
@@ -15,50 +15,70 @@ public class DepartmentsController : ControllerBase
         _service = service;
     }
 
-    // ========== GET ALL DEPARTMENTS ==========
-    // SuperAdmin + Admin Only
-    [Authorize(Policy = "AdminOrSuperAdmin")]
+    // ======================
+    // 🔥 Helpers (JWT Claims)
+    // ======================
+    private string? GetRole()
+    {
+        return User.FindFirstValue(ClaimTypes.Role);  // SuperAdmin / Admin / UnitAdmin / Employee
+    }
+
+    private int? GetDeptId()
+    {
+        return int.TryParse(User.FindFirstValue("DepartmentID"), out var id) ? id : null;
+    }
+
+
+    // =========================================
+    // GET ALL DEPARTMENTS
+    // Only Admin + SuperAdmin
+    // =========================================
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _service.GetAll());
     }
 
-    // ========== GET BY ID ==========
-    // SuperAdmin -> sees all
-    // Admin -> sees all
-    // UnitAdmin -> sees only his department
+
+    // =========================================
+    // GET BY ID
+    // SuperAdmin → كل شيء
+    // Admin → كل شيء
+    // UnitAdmin → قسمه فقط
+    // Employee → ممنوع
+    // =========================================
     [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var role = UserContext.GetRole(User);
-        var deptId = UserContext.GetDepartmentID(User);
+        var role = GetRole();
+        var deptId = GetDeptId();
 
-        // UnitAdmin → يشاهد قسمه فقط
-        if (role == 3)
+        if (role == "SuperAdmin" || role == "Admin")
+        {
+            var dept = await _service.GetById(id);
+            return dept == null ? NotFound() : Ok(dept);
+        }
+
+        if (role == "UnitAdmin")
         {
             if (deptId != id)
-                return Forbid("You can only view your own department.");
+                return Forbid("You can only access your own department.");
 
-            var result = await _service.GetById(id);
-            return result == null ? NotFound() : Ok(result);
+            var dept = await _service.GetById(id);
+            return dept == null ? NotFound() : Ok(dept);
         }
 
-        // Admin + SuperAdmin → يشاهدون كل الأقسام
-        if (role == 0 || role == 1)
-        {
-            var result = await _service.GetById(id);
-            return result == null ? NotFound() : Ok(result);
-        }
-
-        // Employee → ممنوع تمامًا
-        return Forbid("You are not allowed to view department data.");
+        // Employee ممنوع
+        return Forbid("Employees cannot view department data.");
     }
 
-    // ========== CREATE ==========
-    // SuperAdmin Only
-    [Authorize(Policy = "SuperAdminOnly")]
+
+    // =========================================
+    // CREATE — SuperAdmin Only
+    // =========================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create(DepartmentCreateDto dto)
     {
@@ -66,9 +86,11 @@ public class DepartmentsController : ControllerBase
         return result ? Ok("Department Created") : BadRequest();
     }
 
-    // ========== UPDATE ==========
-    // SuperAdmin Only
-    [Authorize(Policy = "SuperAdminOnly")]
+
+    // =========================================
+    // UPDATE — SuperAdmin Only
+    // =========================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpPut]
     public async Task<IActionResult> Update(DepartmentUpdateDto dto)
     {
@@ -76,9 +98,11 @@ public class DepartmentsController : ControllerBase
         return result ? Ok("Department Updated") : NotFound();
     }
 
-    // ========== DELETE ==========
-    // SuperAdmin Only
-    [Authorize(Policy = "SuperAdminOnly")]
+
+    // =========================================
+    // DELETE — SuperAdmin Only
+    // =========================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

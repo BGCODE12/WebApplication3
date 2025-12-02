@@ -19,7 +19,10 @@ public class DailyAttendanceSummaryController : ControllerBase
     // ================================
     // Helpers (Role / Employee / Dept)
     // ================================
-    private string? GetRole() => User.FindFirstValue("Role");
+    private string? GetRole()
+    {
+        return User.FindFirstValue(ClaimTypes.Role);
+    }
 
     private int? GetEmployeeId() =>
         int.TryParse(User.FindFirstValue("EmployeeID"), out var id) ? id : null;

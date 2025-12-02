@@ -42,15 +42,13 @@ namespace WebApplication3.Controllers
             {
                 token,
                 userId = user.UserID,
-                role = ConvertRoleToName(user.Role),
+                role = ConvertRoleToName(user.Role),   // ← نرجع الاسم
                 employeeId = user.EmployeeID,
                 departmentId = user.DepartmentID
             });
         }
 
-        // ===============================
-        // تحويل الرقم من DB → اسم الدور
-        // ===============================
+
         private string ConvertRoleToName(string role)
         {
             return role switch
@@ -63,15 +61,15 @@ namespace WebApplication3.Controllers
             };
         }
 
-        // ===============================
-        // توليد الـ JWT Token
-        // ===============================
+
         private string GenerateJwtToken(User user)
         {
+            string roleName = ConvertRoleToName(user.Role);
+
             var claims = new List<Claim>
     {
         new Claim("UserID", user.UserID.ToString()),
-        new Claim("Role", user.Role.ToString()),
+        new Claim(ClaimTypes.Role, roleName),     // 👈 المهم هنا
         new Claim("EmployeeID", user.EmployeeID?.ToString() ?? ""),
         new Claim("DepartmentID", user.DepartmentID?.ToString() ?? "")
     };

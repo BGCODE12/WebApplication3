@@ -1,7 +1,8 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApplication3.Models;
 using WebApplication3.Models.DTOs.Devices;
-using WebApplication3.Repositories;
 using WebApplication3.Repositories.DeviceRepository;
 
 [ApiController]
@@ -15,20 +16,60 @@ public class DevicesController : ControllerBase
         _repo = repo;
     }
 
+    // ======================
+    // 🔥 Helpers for Role, DeptID
+    // ======================
+    private string? GetRole() =>
+        User.FindFirstValue(ClaimTypes.Role);  // SuperAdmin / Admin / UnitAdmin / Employee
+
+    private int? GetDeptId() =>
+        int.TryParse(User.FindFirstValue("DepartmentID"), out var id) ? id : null;
+
+
+    // =========================================================
+    // GET ALL DEVICES
+    // SuperAdmin + Admin + UnitAdmin  → مسموح
+    // Employee → ممنوع
+    // =========================================================
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _repo.GetAll());
+        var role = GetRole();
+
+        if (role == "SuperAdmin" || role == "Admin" || role == "UnitAdmin")
+            return Ok(await _repo.GetAll());
+
+        return Forbid("Employees cannot view devices.");
     }
 
+
+    // =========================================================
+    // GET BY ID
+    // SuperAdmin + Admin + UnitAdmin
+    // =========================================================
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> Get(int id)
     {
-        var device = await _repo.GetById(id);
-        return device == null ? NotFound() : Ok(device);
+        var role = GetRole();
+
+        if (role == "SuperAdmin" || role == "Admin" || role == "UnitAdmin")
+        {
+            var device = await _repo.GetById(id);
+            return device == null ? NotFound() : Ok(device);
+        }
+
+        return Forbid("Employees cannot view devices.");
     }
 
+
+    // =========================================================
+    // CREATE DEVICE
+    // SuperAdmin ONLY
+    // =========================================================
     [HttpPost]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> Create(DeviceCreateDto dto)
     {
         var model = new Device
@@ -39,10 +80,16 @@ public class DevicesController : ControllerBase
 
         return (await _repo.Create(model)) > 0
             ? Ok("Device created")
-            : BadRequest();
+            : BadRequest("Failed to create device");
     }
 
+
+    // =========================================================
+    // UPDATE DEVICE
+    // SuperAdmin ONLY
+    // =========================================================
     [HttpPut]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> Update(DeviceUpdateDto dto)
     {
         var model = await _repo.GetById(dto.DeviceID);
@@ -53,10 +100,16 @@ public class DevicesController : ControllerBase
 
         return (await _repo.Update(model)) > 0
             ? Ok("Device updated")
-            : BadRequest();
+            : BadRequest("Failed to update");
     }
 
+
+    // =========================================================
+    // DELETE DEVICE
+    // SuperAdmin ONLY
+    // =========================================================
     [HttpDelete("{id}")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> Delete(int id)
     {
         return (await _repo.Delete(id)) > 0

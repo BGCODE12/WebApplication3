@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication3.Helpers;
+using System.Security.Claims;
 using WebApplication3.Models;
 using WebApplication3.Repositories.EmployeeRepositiry;
 
@@ -15,52 +15,70 @@ public class EmployeesController : ControllerBase
         _repo = repo;
     }
 
-    // 1) SuperAdmin + Admin + UnitAdmin + Employee (ولكن كل واحد حسب صلاحياته)
+    // ============================
+    // Helper functions
+    // ============================
+    private string? GetRole() =>
+        User.FindFirstValue(ClaimTypes.Role);   // SuperAdmin / Admin / UnitAdmin / Employee
+
+    private int? GetEmployeeId() =>
+        int.TryParse(User.FindFirstValue("EmployeeID"), out var id) ? id : null;
+
+    private int? GetDeptId() =>
+        int.TryParse(User.FindFirstValue("DepartmentID"), out var id) ? id : null;
+
+
+
+    // ================================================================
+    // GET EMPLOYEE BY ID
+    // Employee → sees ONLY himself
+    // UnitAdmin → sees ONLY his department
+    // Admin + SuperAdmin → see all
+    // ================================================================
     [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var role = UserContext.GetRole(User);
-        var employeeId = UserContext.GetEmployeeID(User);
-        var departmentId = UserContext.GetDepartmentID(User);
+        var role = GetRole();
+        var empId = GetEmployeeId();
+        var deptId = GetDeptId();
 
-        // Employee → يشاهد نفسه فقط
-        if (role == 2) // Employee
+        var employee = await _repo.GetById(id);
+        if (employee == null) return NotFound();
+
+
+        // Employee → can view ONLY himself
+        if (role == "Employee")
         {
-            if (employeeId != id)
-                return Forbid("You can view your own data only.");
-
-            return Ok(await _repo.GetById(id));
-        }
-
-        // UnitAdmin → يشاهد موظفين قسمه فقط
-        if (role == 3) // UnitAdmin
-        {
-            var employee = await _repo.GetById(id);
-            if (employee == null) return NotFound();
-
-            if (employee.DepartmentID != departmentId)
-                return Forbid("You can see employees in your department only.");
+            if (empId != id)
+                return Forbid("You can only view your own profile.");
 
             return Ok(employee);
         }
 
-        // Admin → يرى الجميع لكن لا يعدّل
-        if (role == 1) // Admin
+        // UnitAdmin → can view ONLY employees in his department
+        if (role == "UnitAdmin")
         {
-            return Ok(await _repo.GetById(id));
+            if (employee.DepartmentID != deptId)
+                return Forbid("You can only view employees in your department.");
+
+            return Ok(employee);
         }
 
-        // SuperAdmin → كل الصلاحيات
-        if (role == 0)
-            return Ok(await _repo.GetById(id));
+        // Admin + SuperAdmin → full access
+        if (role == "Admin" || role == "SuperAdmin")
+            return Ok(employee);
 
         return Forbid();
     }
 
 
-    // 2) الحصول على كل الموظفين (Admin + SuperAdmin فقط)
-    [Authorize(Policy = "AdminOrSuperAdmin")]
+
+    // ================================================================
+    // GET ALL EMPLOYEES
+    // SuperAdmin + Admin ONLY
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -68,60 +86,78 @@ public class EmployeesController : ControllerBase
     }
 
 
-    // 3) UnitAdmin → كل موظفين قسمه فقط
-    [Authorize(Policy = "UnitAdminOnly")]
+
+    // ================================================================
+    // GET EMPLOYEES IN CURRENT UNITADMIN DEPARTMENT
+    // UnitAdmin ONLY
+    // ================================================================
+    [Authorize(Roles = "UnitAdmin")]
     [HttpGet("department")]
-    public async Task<IActionResult> GetMyDepartmentEmployees()
+    public async Task<IActionResult> GetDepartmentEmployees()
     {
-        var deptID = UserContext.GetDepartmentID(User);
+        var deptId = GetDeptId();
+        if (deptId == null)
+            return BadRequest("DepartmentID missing");
 
-        if (deptID == null)
-            return BadRequest("Department ID missing");
-
-        return Ok(await _repo.GetByDepartment((int)deptID));
+        return Ok(await _repo.GetByDepartment(deptId.Value));
     }
 
 
-    // 4) Employee → يشاهد ملفه الخاص فقط
-    [Authorize(Policy = "EmployeeOnly")]
+
+    // ================================================================
+    // EMPLOYEE GET HIS OWN PROFILE
+    // Employee ONLY
+    // ================================================================
+    [Authorize(Roles = "Employee")]
     [HttpGet("me")]
     public async Task<IActionResult> MyProfile()
     {
-        var empId = UserContext.GetEmployeeID(User);
-
+        var empId = GetEmployeeId();
         if (empId == null)
-            return Unauthorized("No EmployeeID in token");
+            return Unauthorized("EmployeeID is missing in token");
 
-        return Ok(await _repo.GetById((int)empId));
+        return Ok(await _repo.GetById(empId.Value));
     }
 
 
-    // 5) إضافة موظف (SuperAdmin فقط)
-    [Authorize(Policy = "SuperAdminOnly")]
+
+    // ================================================================
+    // CREATE EMPLOYEE
+    // SuperAdmin ONLY
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create(Employee model)
     {
-        await _repo.Create(model);
-        return Ok("Employee created");
+        var res = await _repo.Create(model);
+        return res > 0 ? Ok("Employee created") : BadRequest();
     }
 
 
-    // 6) تحديث موظف (SuperAdmin فقط)
-    [Authorize(Policy = "SuperAdminOnly")]
+
+    // ================================================================
+    // UPDATE EMPLOYEE
+    // SuperAdmin ONLY
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpPut]
     public async Task<IActionResult> Update(Employee model)
     {
-        await _repo.Update(model);
-        return Ok("Employee updated");
+        var res = await _repo.Update(model);
+        return res > 0 ? Ok("Employee updated") : NotFound();
     }
 
 
-    // 7) حذف موظف (SuperAdmin فقط)
-    [Authorize(Policy = "SuperAdminOnly")]
+
+    // ================================================================
+    // DELETE EMPLOYEE
+    // SuperAdmin ONLY
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _repo.Delete(id);
-        return Ok("Employee deleted");
+        var res = await _repo.Delete(id);
+        return res > 0 ? Ok("Employee deleted") : NotFound();
     }
 }

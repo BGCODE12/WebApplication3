@@ -14,44 +14,26 @@ using WebApplication3.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
-builder.Services.AddControllers();
-builder.Services.AddSingleton<Db>();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+// ===== CORS =====
+builder.Services.AddCors(options =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.AddPolicy("AllowAll", policy =>
     {
-        Title = "Attendance API",
-        Version = "v1"
-    });
-
-    // 🔥 تعريف نظام الأمان JWT في Swagger
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    {
-        Description = "ضع كلمة Bearer ثم فراغ ثم التوكن.\nمثال: Bearer eyJhbGciOiJIUz...",
-        Name = "Authorization",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
+// ===== DB =====
+builder.Services.AddSingleton<Db>();
+
+// ===== Controllers =====
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// ===== DI =====
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
@@ -67,71 +49,57 @@ builder.Services.AddScoped<IAttendanceSessionRepository, AttendanceSessionReposi
 builder.Services.AddScoped<IAttendanceLogRawRepository, AttendanceLogRawRepository>();
 builder.Services.AddScoped<IDailyAttendanceSummaryRepository, DailyAttendanceSummaryRepository>();
 
+// ===== JWT AUTH =====
+var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
 
-// CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("*", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
-
-var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
+    options.RequireHttpsMetadata = false; // مهم لـ Postman و localhost
+    options.SaveToken = true;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
+
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
-        )
+
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ClockSkew = TimeSpan.Zero // حتى لا يتأخر التوكن
     };
 });
+
+// ===== Authorization =====
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("SuperAdminOnly", p => p.RequireClaim("Role", "0"));
-    options.AddPolicy("AdminOnly", p => p.RequireClaim("Role", "1"));
-    options.AddPolicy("EmployeeOnly", p => p.RequireClaim("Role", "2"));
-    options.AddPolicy("UnitAdminOnly", p => p.RequireClaim("Role", "3"));
+    options.AddPolicy("SuperAdminOnly", p => p.RequireRole("SuperAdmin"));
+    options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
+    options.AddPolicy("UnitAdminOnly", p => p.RequireRole("UnitAdmin"));
+    options.AddPolicy("EmployeeOnly", p => p.RequireRole("Employee"));
 
-    // سياسات مركبة
-    options.AddPolicy("AdminOrSuperAdmin", p => p.RequireClaim("Role", "0", "1"));
-    options.AddPolicy("UnitAdminOrSuperAdmin", p => p.RequireClaim("Role", "0", "3"));
+    options.AddPolicy("AdminOrSuperAdmin", p => p.RequireRole("SuperAdmin", "Admin"));
+    options.AddPolicy("UnitAdminOrSuperAdmin", p => p.RequireRole("SuperAdmin", "UnitAdmin"));
 });
 
-
-
-
-builder.Services.AddAuthorization();
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Swagger
+// ===== Swagger =====
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// ===== Middleware =====
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

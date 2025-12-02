@@ -18,7 +18,10 @@ public class ShiftsController : ControllerBase
     // =============================================
     // Helpers → Read Claims from JWT
     // =============================================
-    private string? GetRole() => User.FindFirstValue("Role");
+    private string? GetRole()
+    {
+        return User.FindFirstValue(ClaimTypes.Role);
+    }
 
 
     // =============================================

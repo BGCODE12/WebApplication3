@@ -18,7 +18,10 @@ public class ShiftDaysController : ControllerBase
     // ===============================
     // Helpers → لاستخراج الدور من JWT
     // ===============================
-    private string? GetRole() => User.FindFirstValue("Role");
+    private string? GetRole()
+    {
+        return User.FindFirstValue(ClaimTypes.Role);
+    }
 
     // ===============================
     // GET ALL — الجميع يستطيع القراءة

@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApplication3.Models;
 using WebApplication3.Models.DTOs.LeaveTypes;
-using WebApplication3.Repositories;
 using WebApplication3.Repositories.LeaveTypeRepository;
 
 [ApiController]
@@ -15,12 +16,31 @@ public class LeaveTypesController : ControllerBase
         _repo = repo;
     }
 
+    // ============================
+    // Helpers (Role)
+    // ============================
+    private string? GetRole() =>
+        User.FindFirstValue(ClaimTypes.Role);   // SuperAdmin / Admin / UnitAdmin / Employee
+
+
+
+    // ================================================================
+    // GET ALL LEAVE TYPES
+    // SuperAdmin + Admin + UnitAdmin + Employee
+    // (????? ???? ??? ????? ??????? ??????? ????)
+    // ================================================================
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _repo.GetAll());
     }
 
+
+    // ================================================================
+    // GET BY ID (Everyone Allowed)
+    // ================================================================
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
@@ -28,6 +48,11 @@ public class LeaveTypesController : ControllerBase
         return item == null ? NotFound() : Ok(item);
     }
 
+
+    // ================================================================
+    // CREATE (SuperAdmin + Admin)
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(LeaveTypeCreateDto dto)
     {
@@ -41,6 +66,11 @@ public class LeaveTypesController : ControllerBase
             : BadRequest("Failed");
     }
 
+
+    // ================================================================
+    // UPDATE (SuperAdmin + Admin)
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin,Admin")]
     [HttpPut]
     public async Task<IActionResult> Update(LeaveTypeUpdateDto dto)
     {
@@ -54,6 +84,11 @@ public class LeaveTypesController : ControllerBase
             : BadRequest("Failed");
     }
 
+
+    // ================================================================
+    // DELETE (SuperAdmin ONLY)
+    // ================================================================
+    [Authorize(Roles = "SuperAdmin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

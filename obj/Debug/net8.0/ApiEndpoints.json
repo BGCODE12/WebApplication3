@@ -68,7 +68,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.AttendanceSessionsController",
+    "ContainingType": "AttendanceSessionsController",
     "Method": "GetAll",
     "RelativePath": "api/AttendanceSessions",
     "HttpMethod": "GET",
@@ -78,7 +78,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.AttendanceSessionsController",
+    "ContainingType": "AttendanceSessionsController",
     "Method": "Create",
     "RelativePath": "api/AttendanceSessions",
     "HttpMethod": "POST",
@@ -94,7 +94,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.AttendanceSessionsController",
+    "ContainingType": "AttendanceSessionsController",
     "Method": "Update",
     "RelativePath": "api/AttendanceSessions",
     "HttpMethod": "PUT",
@@ -110,7 +110,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.AttendanceSessionsController",
+    "ContainingType": "AttendanceSessionsController",
     "Method": "Get",
     "RelativePath": "api/AttendanceSessions/{id}",
     "HttpMethod": "GET",
@@ -126,7 +126,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "WebApplication3.Controllers.AttendanceSessionsController",
+    "ContainingType": "AttendanceSessionsController",
     "Method": "Delete",
     "RelativePath": "api/AttendanceSessions/{id}",
     "HttpMethod": "DELETE",
@@ -455,7 +455,7 @@
   },
   {
     "ContainingType": "EmployeesController",
-    "Method": "GetMyDepartmentEmployees",
+    "Method": "GetDepartmentEmployees",
     "RelativePath": "api/Employees/department",
     "HttpMethod": "GET",
     "IsController": true,
